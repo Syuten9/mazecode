@@ -28,6 +28,7 @@ class Maze:
 
     def reset(self):
         self.cur_loc = np.array([1, 1])
+        return self.cur_loc
 
     def get_value(self, loc):
         return self.canvas[loc[0], loc[1]]
@@ -59,6 +60,8 @@ class Maze:
             self.cur_loc += np.array([0, 1])
         elif action == 3:    # left
             self.cur_loc -= np.array([0, 1])
+        else:
+            raise ValueError('Invalid action: {}'.format(action))
 
         # reward
         board_value = self.get_value(self.cur_loc)
