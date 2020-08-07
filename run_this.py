@@ -3,35 +3,40 @@ from maze_env import Maze
 from RL_brain import QLearningTable
 
 
-def update():
-    for episode in range(100):
+def run(n_episode=100):
+    for episode in range(n_episode):
+
+        print('Episode {}'.format(episode+1))
+
         # initial observation
         observation = env.reset()
         possible_actions = env.get_possible_actions()
 
+        step = 0
         while True:
-            # fresh env
-            env.render()
-
             # RL choose action based on observation
-            action = RL.choose_action(str(observation, possible_actions))
+            action = RL.choose_action(str(observation), possible_actions)
 
             # RL take action and get next observation and reward
-            observation_, reward, done = env.step(action)
+            observation_, reward, done, possible_actions = env.step(action)
 
             # RL learn from this transition
             RL.learn(str(observation), action, reward, str(observation_))
 
             # swap observation
-            observation = observation_
+            observation = observation_ if isinstance(observation_, str) else observation_.copy()
+
+            step += 1
 
             # break while loop when end of this episode
             if done:
                 break
 
+        print('Episode {} ends in {} steps.'.format(episode+1, step))
+
     # end of game
     print('game over')
-    env.destroy()
+
 
 if __name__ == "__main__":
     board = np.zeros((12, 12))
@@ -55,5 +60,4 @@ if __name__ == "__main__":
     env = Maze(board)
     RL = QLearningTable(actions=list(range(4)))
 
-    env.after(100, update)
-    env.mainloop()
+    run(n_episode=100)
